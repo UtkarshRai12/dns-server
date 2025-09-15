@@ -13,8 +13,28 @@ udpSocket.on("message", (buf, rinfo) => {
     responseHeader[2] = responseHeader[2] & 0xfe;
     responseHeader[4] = responseHeader[4] & 0x00;
     responseHeader[5] = responseHeader[5] | 0x01;
+    const questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
-    udpSocket.send(responseHeader, rinfo.port, rinfo.address);
+    let curr = 12;
+    let labelLength = buf[12];
+    while (labelLength !== 0) {
+      questionBuffer = Buffer.concat([
+        questionBuffer,
+        buf.slice(curr, curr + labelLength + 1),
+      ]);
+      curr += labelLength + 1;
+      labelLength = buf[curr];
+    }
+    questionBuffer = Buffer.concat([questionBuffer, buf.slice(curr, curr + 5)]);
+    console.log(
+      "responseBuffer",
+      Buffer.concat([responseHeader, questionBuffer])
+    );
+    udpSocket.send(
+      Buffer.concat([responseHeader, questionBuffer]),
+      rinfo.port,
+      rinfo.address
+    );
   } catch (e) {
     console.log(`Error receiving data: ${e}`);
   }
