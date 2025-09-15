@@ -9,11 +9,11 @@ udpSocket.on("message", (buf, rinfo) => {
   try {
     let responseHeader = Buffer.from(buf.slice(0, 12));
     console.log("header:", responseHeader);
-    responseHeader[2] = responseHeader[2] | 0x80;
+    responseHeader[2] = responseHeader[2] | 0x81; // QR = 1
     responseHeader[2] = responseHeader[2] & 0xfe;
-    responseHeader[4] = responseHeader[4] & 0x00;
-    responseHeader[5] = responseHeader[5] | 0x01;
-    responseHeader[7] = responseHeader[7] | 0x01;
+    // responseHeader[4] = responseHeader[4] & 0x00;
+    // responseHeader[5] = responseHeader[5] | 0x01;
+    // responseHeader[7] = responseHeader[7] | 0x01;
     let questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
     let curr = 12;
