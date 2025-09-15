@@ -10,6 +10,7 @@ udpSocket.on("message", (buf, rinfo) => {
     const responseHeader = Buffer.from(buf.slice(0, 12));
     console.log("header:", responseHeader);
     responseHeader[2] = responseHeader[2] | 0x80;
+    responseHeader[2] = responseHeader[2] & 0xfe;
     responseHeader[4] = responseHeader[4] & 0x00;
     responseHeader[5] = responseHeader[5] & 0x00;
     console.log("header:", responseHeader);
