@@ -15,7 +15,7 @@ udpSocket.on("message", (buf, rinfo) => {
     if (!(responseHeader[3] & 0x0f) !== 0)
       responseHeader[3] = responseHeader[3] | 0x04;
     // responseHeader[5] = responseHeader[5] | 0x01;
-    responseHeader[7] = responseHeader[7] & 0x00;
+    // responseHeader[7] = responseHeader[7] & 0x00;
     let questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
     let curr = 12;
@@ -40,7 +40,7 @@ udpSocket.on("message", (buf, rinfo) => {
       Buffer.concat([responseHeader, questionBuffer, answerBuffer])
     );
     udpSocket.send(
-      Buffer.concat([responseHeader, rest]),
+      Buffer.concat([responseHeader, rest, answerBuffer]),
       rinfo.port,
       rinfo.address
     );
