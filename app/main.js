@@ -7,9 +7,10 @@ udpSocket.bind(2053, "127.0.0.1");
 
 udpSocket.on("message", (buf, rinfo) => {
   try {
-    const header = buf.slice(0, 12);
-    console.log("header:", header);
-    udpSocket.send(header, rinfo.port, rinfo.address);
+    const responseHeader = Buffer.from(buf.slice(0, 12));
+    responseHeader[3] = (responseHeader[3] | 0x80; // Set QR to 1 (response) and Opcode to 0 (standard query)
+    console.log("header:", responseHeader);
+    udpSocket.send(responseHeader, rinfo.port, rinfo.address);
   } catch (e) {
     console.log(`Error receiving data: ${e}`);
   }
