@@ -28,7 +28,7 @@ udpSocket.on("message", (buf, rinfo) => {
       labelLength = buf[curr];
     }
     questionBuffer = Buffer.concat([questionBuffer, buf.slice(curr, curr + 5)]);
-    let answerBuffer = Buffer.from(questionBuffer);
+    let answerBuffer = Buffer.concat([questionBuffer]);
     answerBuffer = answerBuffer.concat(
       answerBuffer,
       [0x80, 0x01, 0x00, 0x08, 0x08, 0x08, 0x08]
