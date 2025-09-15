@@ -11,6 +11,7 @@ udpSocket.on("message", (buf, rinfo) => {
     console.log("header:", responseHeader);
     responseHeader[2] = responseHeader[2] | 0x80;
     responseHeader[4] = responseHeader[4] & 0x00;
+    responseHeader[5] = responseHeader[5] & 0x00;
     console.log("header:", responseHeader);
     udpSocket.send(responseHeader, rinfo.port, rinfo.address);
   } catch (e) {
