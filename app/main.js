@@ -11,7 +11,7 @@ udpSocket.on("message", (buf, rinfo) => {
     console.log("header:", responseHeader);
     responseHeader[2] = responseHeader[2] | 0x80; // QR = 1
     responseHeader[2] = responseHeader[2] & 0xff;
-    responseHeader[3] = responseHeader[3] & 0x04;
+    responseHeader[3] = responseHeader[3] | 0x04;
     // responseHeader[5] = responseHeader[5] | 0x01;
     // responseHeader[7] = responseHeader[7] | 0x01;
     let questionBuffer = Buffer.from([]);
