@@ -7,7 +7,7 @@ udpSocket.bind(2053, "127.0.0.1");
 
 udpSocket.on("message", (buf, rinfo) => {
   try {
-    const id = buf.slice(0, 2);
+    const id = buf.slice(0, 11);
     console.log("buffer:", buf);
     console.log("Packet ID:", id);
     // Flags: QR=1, OPCODE=0, AA=0, TC=0, RD=0, RA=0, Z=0, RCODE=0
