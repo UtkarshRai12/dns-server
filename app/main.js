@@ -8,6 +8,7 @@ udpSocket.bind(2053, "127.0.0.1");
 udpSocket.on("message", (buf, rinfo) => {
   try {
     let responseHeader = Buffer.from(buf.slice(0, 12));
+    let rest = buf.slice(12);
     console.log("header:", responseHeader);
     responseHeader[2] = responseHeader[2] | 0x80; // QR = 1
     responseHeader[2] = responseHeader[2] & 0xff;
@@ -38,7 +39,11 @@ udpSocket.on("message", (buf, rinfo) => {
       "responseBuffer",
       Buffer.concat([responseHeader, questionBuffer, answerBuffer])
     );
-    udpSocket.send(Buffer.concat([responseHeader]), rinfo.port, rinfo.address);
+    udpSocket.send(
+      Buffer.concat([responseHeader, rest]),
+      rinfo.port,
+      rinfo.address
+    );
   } catch (e) {
     console.log(`Error receiving data: ${e}`);
   }
