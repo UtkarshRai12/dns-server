@@ -18,6 +18,7 @@ udpSocket.on("message", (buf, rinfo) => {
     let curr = 12;
     let labelLength = buf[12];
     while (labelLength !== 0) {
+      console.log("labelLength:", labelLength);
       questionBuffer = Buffer.concat([
         questionBuffer,
         buf.slice(curr, curr + labelLength + 1),
