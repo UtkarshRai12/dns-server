@@ -7,7 +7,7 @@ udpSocket.bind(2053, "127.0.0.1");
 
 udpSocket.on("message", (buf, rinfo) => {
   try {
-    const responseHeader = Buffer.from(buf.slice(0, 12));
+    let responseHeader = Buffer.from(buf.slice(0, 12));
     console.log("header:", responseHeader);
     responseHeader[2] = responseHeader[2] | 0x80;
     responseHeader[2] = responseHeader[2] & 0xfe;
