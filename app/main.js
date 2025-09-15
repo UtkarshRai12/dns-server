@@ -39,11 +39,7 @@ udpSocket.on("message", (buf, rinfo) => {
       "responseBuffer",
       Buffer.concat([responseHeader, questionBuffer, answerBuffer])
     );
-    udpSocket.send(
-      Buffer.concat([responseHeader, questionBuffer]),
-      rinfo.port,
-      rinfo.address
-    );
+    udpSocket.send(Buffer.concat([responseHeader]), rinfo.port, rinfo.address);
   } catch (e) {
     console.log(`Error receiving data: ${e}`);
   }
