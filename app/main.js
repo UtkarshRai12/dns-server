@@ -9,7 +9,6 @@ udpSocket.on("message", (buf, rinfo) => {
   try {
     const response = Buffer.from([
       0x86, 0x2a, 0x01, 0x20, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x06,
     ]);
     udpSocket.send(response, rinfo.port, rinfo.address);
   } catch (e) {
