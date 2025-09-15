@@ -13,6 +13,7 @@ udpSocket.on("message", (buf, rinfo) => {
     responseHeader[2] = responseHeader[2] & 0xfe;
     responseHeader[4] = responseHeader[4] & 0x00;
     responseHeader[5] = responseHeader[5] | 0x01;
+    responseHeader[7] = responseHeader[7] | 0x01;
     let questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
     let curr = 12;
@@ -27,12 +28,17 @@ udpSocket.on("message", (buf, rinfo) => {
       labelLength = buf[curr];
     }
     questionBuffer = Buffer.concat([questionBuffer, buf.slice(curr, curr + 5)]);
+    let answerBuffer = Buffer.from(questionBuffer);
+    answerBuffer = answerBuffer.concat(
+      answerBuffer,
+      [0x80, 0x01, 0x00, 0x08, 0x08, 0x08, 0x08]
+    ); // Type A
     console.log(
       "responseBuffer",
-      Buffer.concat([responseHeader, questionBuffer])
+      Buffer.concat([responseHeader, questionBuffer, answerBuffer])
     );
     udpSocket.send(
-      Buffer.concat([responseHeader, questionBuffer]),
+      Buffer.concat([responseHeader, questionBuffer, answerBuffer]),
       rinfo.port,
       rinfo.address
     );
