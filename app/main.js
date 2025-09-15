@@ -15,7 +15,7 @@ udpSocket.on("message", (buf, rinfo) => {
       responseHeader[3] = responseHeader[3] | 0x04;
     if (!responseHeader[5]) responseHeader[5] = responseHeader[5] | 0x01;
     else responseHeader[5] = 0x00;
-    responseHeader[7] = responseHeader[7] | 0x01;
+    // responseHeader[7] = responseHeader[7] | 0x01;
     let questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
     let curr = 12;
