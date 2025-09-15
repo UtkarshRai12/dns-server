@@ -26,7 +26,7 @@ udpSocket.on("message", (buf, rinfo) => {
       zero, // ARCOUNT
     ]);
 
-    udpSocket.send(response, rinfo.port, rinfo.address);
+    udpSocket.send(header, rinfo.port, rinfo.address);
   } catch (e) {
     console.log(`Error receiving data: ${e}`);
   }
