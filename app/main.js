@@ -13,7 +13,7 @@ udpSocket.on("message", (buf, rinfo) => {
     responseHeader[2] = responseHeader[2] & 0xfe;
     responseHeader[4] = responseHeader[4] & 0x00;
     responseHeader[5] = responseHeader[5] | 0x01;
-    const questionBuffer = Buffer.from([]);
+    let questionBuffer = Buffer.from([]);
     console.log("header:", responseHeader);
     let curr = 12;
     let labelLength = buf[12];
