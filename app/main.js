@@ -31,7 +31,7 @@ udpSocket.on("message", (buf, rinfo) => {
     let answerBuffer = Buffer.concat([questionBuffer]);
     answerBuffer = Buffer.concat([
       answerBuffer,
-      Buffer.from([0x80, 0x01, 0x00, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08]),
+      Buffer.from([0x80, 0x01, 0x00, 0x08, 0x08, 0x04, 0x08, 0x08, 0x08, 0x08]),
     ]); // Type A
     console.log(
       "responseBuffer",
