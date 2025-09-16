@@ -50,7 +50,7 @@ const buildAnswer = (labels, ip) => {
 function parseLabels(buffer, qdcount) {
   const names = [];
   let offset = 12;
-
+  console.log("QDCOUNT:", qdcount);
   for (let i = 0; i < qdcount; i++) {
     const { name, newOffset } = parseName(buffer, offset);
     offset = newOffset;
