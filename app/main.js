@@ -96,12 +96,12 @@ udpSocket.on("message", (buf, rinfo) => {
   try {
     let responseHeader = createResponseHeader(buf.slice(0, 12));
     let questionBuffer = Buffer.alloc(0);
-    let answerBuffer = Buffer.alloc([]);
+    let answerBuffer = [];
     let qcount = buf[5];
     if (responseHeader[3] & (0x0f === 0) && qcount !== 0) {
       console.log("Received DNS query");
       const parsedLabels = parseLabels(buf, qcount);
-      questionBuffer = msg.slice(12, parsedLabels.questionsEndOffset);
+      questionBuffer = buf.slice(12, parsedLabels.questionsEndOffset);
       answerBuffer = parsedLabels.names.map((domain, i) =>
         buildAnswer(domain, `192.0.2.${i + 1}`)
       );
