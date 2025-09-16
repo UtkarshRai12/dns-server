@@ -107,7 +107,7 @@ udpSocket.on("message", (buf, rinfo) => {
       );
     }
     udpSocket.send(
-      Buffer.concat([responseHeader, questionBuffer, answerBuffer]),
+      Buffer.concat([responseHeader, questionBuffer, ...answerBuffer]),
       rinfo.port,
       rinfo.address
     );
