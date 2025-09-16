@@ -100,7 +100,7 @@ udpSocket.on("message", (buf, rinfo) => {
     let qcount = buf[5];
     const flagsIn = buf.readUInt16BE(2);
     const opcode = (flagsIn >> 11) & 0x0f;
-    if (opcode && qcount !== 0) {
+    if (!opcode && qcount !== 0) {
       console.log("Received DNS query");
       const parsedLabels = parseLabels(buf, qcount);
       questionBuffer = buf.slice(12, parsedLabels.questionsEndOffset);
