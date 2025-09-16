@@ -99,6 +99,7 @@ udpSocket.on("message", (buf, rinfo) => {
     let answerBuffer = Buffer.alloc([]);
     let qcount = buf[5];
     if (responseHeader[3] & (0x0f === 0) && qcount !== 0) {
+      console.log("Received DNS query");
       const parsedLabels = parseLabels(buf, qcount);
       questionBuffer = msg.slice(12, parsedLabels.questionsEndOffset);
       answerBuffer = parsedLabels.names.map((domain, i) =>
