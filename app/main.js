@@ -11,7 +11,7 @@ const createResponseHeader = (requestHeader) => {
   responseHeader[2] = responseHeader[2] & 0xff;
   if (!(responseHeader[3] & 0x0f) !== 0)
     responseHeader[3] = responseHeader[3] | 0x04;
-  responseHeader[7] = Buffer.from([responseHeader[5]]); // ANCOUNT = 1
+  responseHeader[7] = responseHeader[5]; // ANCOUNT = 1
   return responseHeader;
 };
 
