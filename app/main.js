@@ -108,6 +108,7 @@ udpSocket.on("message", (buf, rinfo) => {
         buildAnswer(domain, `192.0.2.${i + 1}`)
       );
     }
+    console.log("Answer Buffer:", responseHeader, answerBuffer);
     udpSocket.send(
       Buffer.concat([responseHeader, questionBuffer, ...answerBuffer]),
       rinfo.port,
