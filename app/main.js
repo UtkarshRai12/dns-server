@@ -103,7 +103,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     offset = newOffset;
     // Always read 4 bytes after name: QTYPE + QCLASS
     offset += 4;
-    const query = buffer.concat([header, buffer.slice(oldoffset, offset + 1)]);
+    const query = Buffer.concat([header, buffer.slice(oldoffset, offset + 1)]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
     for (let i = 0; i < process.argv.length; i++) {
@@ -112,15 +112,20 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
         i++;
       }
     }
+    console.log("Resolver:", resolver);
     const [resolverHost, resolverPort] = resolver.split(":");
     udpSocket1.bind(resolverPort, resolverHost);
     const response = await new Promise((resolve, reject) => {
       udpSocket1.on("listening", () => {
+        console.log("UDP Socket 1 listening");
         resolve("RESOLVED LISTENING");
       });
     });
     const sendPromiseHandler = new Promise(async (resolve, reject) => {
       udpSocket1.on("message", (msg, rinfo) => {
+        console.log(
+          `Received response from resolver ${rinfo.address}:${rinfo.port}`
+        );
         resolve(msg);
         udpSocket1.close();
       });
