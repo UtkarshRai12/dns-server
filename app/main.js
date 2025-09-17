@@ -114,9 +114,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     }
     console.log("Resolver:", resolver);
     const [resolverHost, resolverPort] = resolver.split(":");
-    udpSocket1.bind(resolverPort, resolverHost, () => {
-      console.log("UDP Socket 1 bound");
-    });
+    udpSocket1.bind();
     udpSocket1.on("error", (err) => {
       console.log(`Error: ${err}`);
     });
