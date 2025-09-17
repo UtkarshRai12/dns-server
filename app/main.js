@@ -107,7 +107,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     console.log("name:", name, oldoffset, offset, newOffset);
     const query = Buffer.concat([
       header,
-      Buffer.concat([name, buffer.slice(newOffset, newOffset + 4)]),
+      Buffer.concat([name, buffer.slice(newOffset, newOffset + 5)]),
     ]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
@@ -149,12 +149,8 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     console.log("query", query);
     udpSocket1.send(query, parseInt(resolverPort), resolverHost);
     let answer = await sendPromiseHandler;
-    console.log(
-      "Raw answer from resolver:",
-      12 + offset - oldoffset,
-      answer.length
-    );
-    answer = answer.slice(12 + offset - oldoffset, answer.length);
+    console.log("Raw answer from resolver:", name.length + 4, answer.length);
+    answer = answer.slice(name.length + 5, answer.length);
     console.log("Answer from resolver:", answer);
     names.push(answer);
   }
