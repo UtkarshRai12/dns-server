@@ -117,6 +117,9 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     udpSocket1.bind(resolverPort, resolverHost, () => {
       console.log("UDP Socket 1 bound");
     });
+    udpSocket1.on("error", (err) => {
+      console.log(`Error: ${err}`);
+    });
     console.log("binded to", resolverPort, resolverHost);
     const response = await new Promise((resolve, reject) => {
       udpSocket1.on(
