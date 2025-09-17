@@ -10,8 +10,8 @@ const createResponseHeader = (requestHeader) => {
   let responseHeader = Buffer.from(requestHeader);
   responseHeader[2] = responseHeader[2] | 0x80; // QR = 1
   responseHeader[2] = responseHeader[2] & 0xff;
-  if (!(responseHeader[3] & 0x0f) !== 0)
-    responseHeader[3] = responseHeader[3] | 0x04;
+  //   if (!(responseHeader[3] & 0x0f) !== 0)
+  //     responseHeader[3] = responseHeader[3] | 0x04;
   responseHeader[7] = responseHeader[5]; // ANCOUNT = 1
   return responseHeader;
 };
