@@ -154,6 +154,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
         udpSocket1.close();
       });
     });
+    query.writeUInt16BE(1, query.length - 1);
     console.log("query", query);
     udpSocket1.send(query, parseInt(resolverPort), resolverHost, (err) => {
       if (err) {
