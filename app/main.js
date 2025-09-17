@@ -184,7 +184,7 @@ udpSocket.on("message", async (buf, rinfo) => {
     const flagsIn = buf.readUInt16BE(2);
     const opcode = (flagsIn >> 11) & 0x0f;
     if (!opcode && qcount !== 0) {
-      console.log("Received DNS query");
+      console.log("Received DNS query", buf);
       //   const parsedLabels = parseLabels(buf, qcount);
       answerBuffer = await getAnswerBuffer(buf.slice(0, 12), buf, qcount);
       questionBuffer = buf.slice(12, answerBuffer.offset);
