@@ -83,12 +83,12 @@ function parseName(buf, offset) {
       offset += 1;
       break;
     }
-    labels.push(buf.slice(offset + 1, offset + 1 + len).toString());
+    labels.push(buf.slice(offset, offset + 1 + len));
     offset += len + 1;
   }
 
   return {
-    name: labels.join("."),
+    name: Buffer.concat(labels),
     newOffset: jumped ? originalOffset : offset,
   };
 }
@@ -105,7 +105,10 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     offset += 4;
     header[5] = 1; // QDCOUNT = 1
     console.log("name:", name, oldoffset, offset, newOffset);
-    const query = Buffer.concat([header, buffer.slice(oldoffset, offset + 1)]);
+    const query = Buffer.concat([
+      header,
+      Buffer.concat([name, buffer.slice(newOffset, newOffset + 5)]),
+    ]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
     for (let i = 0; i < process.argv.length; i++) {
