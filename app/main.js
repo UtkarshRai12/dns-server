@@ -117,10 +117,17 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     udpSocket1.bind(resolverPort, resolverHost);
     console.log("binded to", resolverPort, resolverHost);
     const response = await new Promise((resolve, reject) => {
-      udpSocket1.on("listening", () => {
-        console.log("UDP Socket 1 listening");
-        resolve("RESOLVED LISTENING");
-      });
+      udpSocket1.on(
+        "listening",
+        () => {
+          console.log("UDP Socket 1 listening");
+          resolve("RESOLVED LISTENING");
+        },
+        (err) => {
+          console.log("error", err);
+          reject(err);
+        }
+      );
     });
     const sendPromiseHandler = new Promise(async (resolve, reject) => {
       udpSocket1.on("message", (msg, rinfo) => {
