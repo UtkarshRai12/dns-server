@@ -97,6 +97,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
   const names = [];
   let offset = 12;
   console.log("QDCOUNT:", qdcount);
+  console.log("Header:", header);
   for (let i = 0; i < qdcount; i++) {
     const { name, newOffset } = parseName(buffer, offset);
     const oldoffset = offset;
