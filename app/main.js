@@ -143,6 +143,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
         console.log(
           `Received response from resolver ${rinfo.address}:${rinfo.port}`
         );
+        console.log("Raw message from resolver:", msg);
         resolve(msg);
         udpSocket1.close();
       });
