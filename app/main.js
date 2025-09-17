@@ -1,4 +1,5 @@
 const dgram = require("dgram");
+const { off } = require("process");
 
 console.log("Logs from your program will appear here!");
 
@@ -32,37 +33,37 @@ const createResponseHeader = (requestHeader) => {
 //   return questionBuffer;
 // };
 
-const buildAnswer = (labels, ip) => {
-  const name = Buffer.from([0xc0, 0x0c]); // pointer to offset 12
-  const type = Buffer.alloc(2);
-  type.writeUInt16BE(1); // A
-  const cls = Buffer.alloc(2);
-  cls.writeUInt16BE(1); // IN
-  const ttl = Buffer.alloc(4);
-  ttl.writeUInt32BE(60);
-  const rdlen = Buffer.alloc(2);
-  rdlen.writeUInt16BE(4);
-  const rdata = Buffer.from(ip.split(".").map(Number));
+// const buildAnswer = (labels, ip) => {
+//   const name = Buffer.from([0xc0, 0x0c]); // pointer to offset 12
+//   const type = Buffer.alloc(2);
+//   type.writeUInt16BE(1); // A
+//   const cls = Buffer.alloc(2);
+//   cls.writeUInt16BE(1); // IN
+//   const ttl = Buffer.alloc(4);
+//   ttl.writeUInt32BE(60);
+//   const rdlen = Buffer.alloc(2);
+//   rdlen.writeUInt16BE(4);
+//   const rdata = Buffer.from(ip.split(".").map(Number));
 
-  return Buffer.concat([name, type, cls, ttl, rdlen, rdata]);
-};
+//   return Buffer.concat([name, type, cls, ttl, rdlen, rdata]);
+// };
 
-function parseLabels(buffer, qdcount) {
-  const names = [];
-  let offset = 12;
-  console.log("QDCOUNT:", qdcount);
-  for (let i = 0; i < qdcount; i++) {
-    const { name, newOffset } = parseName(buffer, offset);
-    offset = newOffset;
+// function parseLabels(header, buffer, qdcount) {
+//   const names = [];
+//   let offset = 12;
+//   console.log("QDCOUNT:", qdcount);
+//   for (let i = 0; i < qdcount; i++) {
+//     const { name, newOffset } = parseName(buffer, offset);
+//     offset = newOffset;
 
-    // Always read 4 bytes after name: QTYPE + QCLASS
-    offset += 4;
+//     // Always read 4 bytes after name: QTYPE + QCLASS
+//     offset += 4;
 
-    names.push(name);
-  }
+//     names.push(name);
+//   }
 
-  return { names, questionsEndOffset: offset };
-}
+//   return { names, questionsEndOffset: offset };
+// }
 
 function parseName(buf, offset) {
   const labels = [];
@@ -92,7 +93,48 @@ function parseName(buf, offset) {
   };
 }
 
-udpSocket.on("message", (buf, rinfo) => {
+const getAnswerBuffer = async (header, buffer, qdcount) => {
+  const names = [];
+  let offset = 12;
+  console.log("QDCOUNT:", qdcount);
+  for (let i = 0; i < qdcount; i++) {
+    const { name, newOffset } = parseName(buffer, offset);
+    const oldoffset = offset;
+    offset = newOffset;
+    // Always read 4 bytes after name: QTYPE + QCLASS
+    offset += 4;
+    const query = buffer.concat([header, buffer.slice(oldoffset, offset + 1)]);
+    let resolver;
+    const udpSocket1 = dgram.createSocket("udp4");
+    for (let i = 0; i < process.argv.length; i++) {
+      if (process.argv[i] === "--resolver") {
+        resolver = process.argv[i + 1];
+        i++;
+      }
+    }
+    const [resolverHost, resolverPort] = resolver.split(":");
+    udpSocket1.bind(resolverPort, resolverHost);
+    const response = await new Promise((resolve, reject) => {
+      udpSocket1.on("listening", () => {
+        resolve("RESOLVED LISTENING");
+      });
+    });
+    const sendPromiseHandler = new Promise(async (resolve, reject) => {
+      udpSocket1.on("message", (msg, rinfo) => {
+        resolve(msg);
+        udpSocket1.close();
+      });
+    });
+    udpSocket1.send(query, parseInt(resolverPort), resolverHost);
+    name = await sendPromiseHandler;
+
+    names.push(name);
+  }
+
+  return { names, offset };
+};
+
+udpSocket.on("message", async (buf, rinfo) => {
   try {
     let responseHeader = createResponseHeader(buf.slice(0, 12));
     let questionBuffer = Buffer.alloc(0);
@@ -102,15 +144,16 @@ udpSocket.on("message", (buf, rinfo) => {
     const opcode = (flagsIn >> 11) & 0x0f;
     if (!opcode && qcount !== 0) {
       console.log("Received DNS query");
-      const parsedLabels = parseLabels(buf, qcount);
-      questionBuffer = buf.slice(12, parsedLabels.questionsEndOffset);
-      answerBuffer = parsedLabels.names.map((domain, i) =>
-        buildAnswer(domain, `192.0.2.${i + 1}`)
-      );
+      //   const parsedLabels = parseLabels(buf, qcount);
+      answerBuffer = await getAnswerBuffer(buf.slice(0, 12), buf, qcount);
+      questionBuffer = buf.slice(12, answerBuffer.offset);
+      //   answerBuffer = parsedLabels.names.map((domain, i) =>
+      //     buildAnswer(domain, `192.0.2.${i + 1}`)
+      //   );
     }
     console.log("Answer Buffer:", responseHeader, answerBuffer);
     udpSocket.send(
-      Buffer.concat([responseHeader, questionBuffer, ...answerBuffer]),
+      Buffer.concat([responseHeader, questionBuffer, ...answerBuffer.names]),
       rinfo.port,
       rinfo.address
     );
