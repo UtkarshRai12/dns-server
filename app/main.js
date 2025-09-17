@@ -142,10 +142,8 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
       });
     });
     udpSocket1.send(query, parseInt(resolverPort), resolverHost);
-    const answer = (await sendPromiseHandler).slice(
-      12 + offset - oldoffset,
-      answer.length
-    );
+    let answer = await sendPromiseHandler;
+    answer = answer.slice(12 + offset - oldoffset, answer.length);
     console.log("Answer from resolver:", answer);
     names.push(answer);
   }
