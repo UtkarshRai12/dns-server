@@ -104,6 +104,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     offset = newOffset;
     // Always read 4 bytes after name: QTYPE + QCLASS
     offset += 4;
+    const forwardRequestId = Math.floor(Math.random() * 65536);
     header.writeUInt16BE(forwardRequestId, 0);
     header.writeUInt16BE(0x0100, 2); // Standard query flags (QR=0, OPCODE=0, RD=1)
     header.writeUInt16BE(1, 4); // QDCOUNT = 1
