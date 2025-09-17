@@ -141,6 +141,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
         udpSocket1.close();
       });
     });
+    console.log("query", query);
     udpSocket1.send(query, parseInt(resolverPort), resolverHost);
     let answer = await sendPromiseHandler;
     console.log(
