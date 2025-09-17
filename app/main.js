@@ -104,11 +104,16 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     offset = newOffset;
     // Always read 4 bytes after name: QTYPE + QCLASS
     offset += 4;
-    header[5] = 1; // QDCOUNT = 1
+    header.writeUInt16BE(forwardRequestId, 0);
+    header.writeUInt16BE(0x0100, 2); // Standard query flags (QR=0, OPCODE=0, RD=1)
+    header.writeUInt16BE(1, 4); // QDCOUNT = 1
+    header.writeUInt16BE(0, 6); // ANCOUNT = 0
+    header.writeUInt16BE(0, 8); // NSCOUNT = 0
+    header.writeUInt16BE(0, 10);
     console.log("name:", name, oldoffset, offset, newOffset);
     const query = Buffer.concat([
       header,
-      Buffer.concat([name, buffer.slice(newOffset, newOffset + 5)]),
+      Buffer.concat([name, buffer.slice(newOffset, newOffset + 4)]),
     ]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
@@ -149,10 +154,18 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
       });
     });
     console.log("query", query);
-    udpSocket1.send(query, parseInt(resolverPort), resolverHost);
+    udpSocket1.send(query, parseInt(resolverPort), resolverHost, (err) => {
+      if (err) {
+        console.log("Error sending to resolver:", err);
+        reject(err);
+        udpSocket1.close();
+      } else {
+        console.log("Query sent to resolver");
+      }
+    });
     let answer = await sendPromiseHandler;
     console.log("Raw answer from resolver:", name.length + 4, answer.length);
-    answer = answer.slice(name.length + 5 + 12, answer.length);
+    answer = answer.slice(name.length + 4 + 12, answer.length);
     console.log("Answer from resolver:", answer);
     names.push(answer);
   }
