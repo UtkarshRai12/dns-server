@@ -107,7 +107,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     console.log("name:", name, oldoffset, offset, newOffset);
     const query = Buffer.concat([
       header,
-      Buffer.concat([name, buffer.slice(newOffset, newOffset + 5)]),
+      Buffer.concat([name, buffer.slice(newOffset, newOffset + 4)]),
     ]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
