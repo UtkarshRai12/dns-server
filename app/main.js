@@ -104,6 +104,7 @@ const getAnswerBuffer = async (header, buffer, qdcount) => {
     // Always read 4 bytes after name: QTYPE + QCLASS
     offset += 4;
     header[5] = 1; // QDCOUNT = 1
+    Console.log("name:", name, oldoffset, offset, newOffset);
     const query = Buffer.concat([header, buffer.slice(oldoffset, offset + 1)]);
     let resolver;
     const udpSocket1 = dgram.createSocket("udp4");
